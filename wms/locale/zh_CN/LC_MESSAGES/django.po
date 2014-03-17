@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-13 18:37+0800\n"
+"POT-Creation-Date: 2014-03-17 20:23+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: jcchen <junchangchen@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,70 +18,126 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: .\models.py:13
-msgid "Supplier"
-msgstr "供应商"
-
-#: .\models.py:14
-msgid "Buyer"
-msgstr "购货商"
-
-#: .\models.py:53
-msgid "Specification"
-msgstr "型号"
-
-#: .\models.py:67
-msgid "Area"
-msgstr "库区号"
-
-#: .\models.py:68
-msgid "Shelf"
-msgstr "货架号"
-
-#: .\models.py:69
-msgid "Place"
-msgstr "货位号"
-
-#: .\models.py:70
+#: .\admin.py:44 .\models.py:101
 msgid "In stock time"
 msgstr "入库时间"
 
-#: .\models.py:80
+#: .\models.py:14
+msgid "Supplier"
+msgstr "供应商"
+
+#: .\models.py:15
+msgid "Buyer"
+msgstr "购货商"
+
+#: .\models.py:29
+msgid "Client"
+msgstr "客户"
+
+#: .\models.py:30
+msgid "Clients"
+msgstr "客户"
+
+#: .\models.py:43
+msgid "Warehouse"
+msgstr "仓库"
+
+#: .\models.py:44
+msgid "Warehouses"
+msgstr "仓库"
+
+#: .\models.py:56
+msgid "Category"
+msgstr "分类"
+
+#: .\models.py:57
+msgid "Categorys"
+msgstr "分类"
+
+#: .\models.py:66
+msgid "Specification"
+msgstr "型号"
+
+#: .\models.py:73
+msgid "Product"
+msgstr "产品"
+
+#: .\models.py:74
+msgid "Products"
+msgstr "产品"
+
+#: .\models.py:98 .\models.py:156
+msgid "Area"
+msgstr "库区号"
+
+#: .\models.py:99 .\models.py:157
+msgid "Shelf"
+msgstr "货架号"
+
+#: .\models.py:100 .\models.py:158
+msgid "Place"
+msgstr "货位号"
+
+#: .\models.py:106
+msgid "Stock Item"
+msgstr "库存信息"
+
+#: .\models.py:107
+msgid "Stock Items"
+msgstr "库存信息"
+
+#: .\models.py:127
 msgid "purchase"
 msgstr "采购入库"
 
-#: .\models.py:81
+#: .\models.py:128
 msgid "production"
 msgstr "生产入库"
 
-#: .\models.py:82
+#: .\models.py:129
 msgid "return product"
 msgstr "退货入库"
 
-#: .\models.py:83
+#: .\models.py:130
 msgid "return material in"
 msgstr "退料入库"
 
-#: .\models.py:90 .\models.py:123
+#: .\models.py:137 .\models.py:177
 msgid "Approver"
 msgstr "接收人"
 
-#: .\models.py:91 .\models.py:124
+#: .\models.py:138 .\models.py:178
 msgid "Deliver"
 msgstr "送货人"
 
-#: .\models.py:92 .\models.py:125
+#: .\models.py:139 .\models.py:179
 msgid "Recipient"
 msgstr "核准人"
 
-#: .\models.py:114
+#: .\models.py:142
+msgid "Stock In Record"
+msgstr "入库记录"
+
+#: .\models.py:143
+msgid "Stock In Records"
+msgstr "入库记录"
+
+#: .\models.py:168
 msgid "sale"
 msgstr "销售出库"
 
-#: .\models.py:115
+#: .\models.py:169
 msgid "consume material"
 msgstr "用料出库"
 
-#: .\models.py:116
+#: .\models.py:170
 msgid "return material out"
 msgstr "退料出库"
+
+#: .\models.py:182
+msgid "Stock Out Record"
+msgstr "出库记录"
+
+#: .\models.py:183
+msgid "Stock Out Records"
+msgstr "出库记录"

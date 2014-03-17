@@ -2,10 +2,12 @@
 
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from models import StoreIn, StoreOut
+from django.utils import timezone
+from models import StoreIn, StoreInDetail, StoreOut, StoreOutDetail
+from services import *
 
 
-@receiver(post_save, sender=StoreIn, dispatch_uid="store_in_post_save_identifier")
+@receiver(post_save, sender=StoreInDetail, dispatch_uid="store_in_post_save_identifier")
 def store_in_post_save(sender, **kwargs):
     """
     添加入库单(入库操作)时, 更新库存状态/或者添加新的产品到仓库
@@ -14,10 +16,21 @@ def store_in_post_save(sender, **kwargs):
     - `sender`:
     - `**kwargs`:
     """
-    # print "store in post save. item: %s" % unicode(sender)
-    # print kwargs
-    instance = kwargs['instance'] # StockIn instance
-    
+    storeindetail = kwargs['instance']
+    product = storeindetail.product
+    warehouse = storeindetail.warehouse
+    if(isProductExistInWarehouse(warehouse, product)):
+        # update quantity
+        storeItem = StoreItem.objects.findByWarehouseAndProduct(warehouse, product)
+        storeItem.quantity = storeItem.quantity + storeindetail.quantity
+        storeItem.in_stock_time = timezone.now()
+        storeItem.save(update_fields=['quantity', 'in_stock_time'])
+        
+    else:
+        # create a new StoreItem
+        storeItem = StoreItem.fromStoreInDetail(storeindetail)
+        storeItem.save()    
+
 
 
 @receiver(post_delete, sender=StoreIn, dispatch_uid='store_in_post_delete_identifier')

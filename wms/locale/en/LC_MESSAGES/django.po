@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-13 18:37+0800\n"
+"POT-Creation-Date: 2014-03-17 20:23+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: jcchen <junchangchen@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,70 +17,129 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: .\models.py:13
-msgid "Supplier"
-msgstr "Supplier"
-
-#: .\models.py:14
-msgid "Buyer"
-msgstr "Buyer"
-
-#: .\models.py:53
-msgid "Specification"
-msgstr "Specification"
-
-#: .\models.py:67
-msgid "Area"
-msgstr "Area"
-
-#: .\models.py:68
-msgid "Shelf"
-msgstr "Shelf"
-
-#: .\models.py:69
-msgid "Place"
-msgstr "Place"
-
-#: .\models.py:70
+#: .\admin.py:44 .\models.py:101
 msgid "In stock time"
 msgstr "In stock time"
 
-#: .\models.py:80
+#: .\models.py:14
+msgid "Supplier"
+msgstr "Supplier"
+
+#: .\models.py:15
+msgid "Buyer"
+msgstr "Buyer"
+
+#: .\models.py:29
+msgid "Client"
+msgstr ""
+
+#: .\models.py:30
+msgid "Clients"
+msgstr ""
+
+#: .\models.py:43
+msgid "Warehouse"
+msgstr ""
+
+#: .\models.py:44
+msgid "Warehouses"
+msgstr ""
+
+#: .\models.py:56
+msgid "Category"
+msgstr ""
+
+#: .\models.py:57
+msgid "Categorys"
+msgstr ""
+
+#: .\models.py:66
+msgid "Specification"
+msgstr "Specification"
+
+#: .\models.py:73
+#, fuzzy
+msgid "Product"
+msgstr "production"
+
+#: .\models.py:74
+#, fuzzy
+msgid "Products"
+msgstr "production"
+
+#: .\models.py:98 .\models.py:156
+msgid "Area"
+msgstr "Area"
+
+#: .\models.py:99 .\models.py:157
+msgid "Shelf"
+msgstr "Shelf"
+
+#: .\models.py:100 .\models.py:158
+msgid "Place"
+msgstr "Place"
+
+#: .\models.py:106
+#, fuzzy
+msgid "Stock Item"
+msgstr "In stock time"
+
+#: .\models.py:107
+msgid "Stock Items"
+msgstr ""
+
+#: .\models.py:127
 msgid "purchase"
 msgstr "purchase"
 
-#: .\models.py:81
+#: .\models.py:128
 msgid "production"
 msgstr "production"
 
-#: .\models.py:82
+#: .\models.py:129
 msgid "return product"
 msgstr "return product"
 
-#: .\models.py:83
+#: .\models.py:130
 msgid "return material in"
 msgstr "return material in"
 
-#: .\models.py:90 .\models.py:123
+#: .\models.py:137 .\models.py:177
 msgid "Approver"
 msgstr "Approver"
 
-#: .\models.py:91 .\models.py:124
+#: .\models.py:138 .\models.py:178
 msgid "Deliver"
 msgstr "Deliver"
 
-#: .\models.py:92 .\models.py:125
+#: .\models.py:139 .\models.py:179
 msgid "Recipient"
 msgstr "Recipient"
 
-#: .\models.py:114
+#: .\models.py:142
+msgid "Stock In Record"
+msgstr ""
+
+#: .\models.py:143
+msgid "Stock In Records"
+msgstr ""
+
+#: .\models.py:168
 msgid "sale"
 msgstr "Sale"
 
-#: .\models.py:115
+#: .\models.py:169
 msgid "consume material"
 msgstr "Consume material"
 
-#: .\models.py:116
+#: .\models.py:170
 msgid "return material out"
 msgstr "return material out"
+
+#: .\models.py:182
+msgid "Stock Out Record"
+msgstr ""
+
+#: .\models.py:183
+msgid "Stock Out Records"
+msgstr ""
