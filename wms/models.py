@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth import models as auth
 from django.utils import timezone
 from mptt.models import MPTTModel
+from mptt.fields import TreeForeignKey
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -67,7 +68,7 @@ class Product(models.Model):
     barcode = models.CharField(max_length=45, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=3)
     unit = models.CharField(max_length=45)
-    category = models.ForeignKey(Category)
+    category = TreeForeignKey(Category)
     
     class Meta:
         verbose_name = _('Product')

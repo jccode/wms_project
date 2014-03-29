@@ -1,0 +1,7 @@
+*.pyc
+/*env*/
+*.sqlite
+.project
+.settings
+*~
+.*

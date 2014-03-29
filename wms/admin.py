@@ -2,10 +2,64 @@
 
 from django.contrib import admin
 from django.db import models
+from django.db.models import Q
 from django.forms import TextInput
+from django.utils.encoding import smart_unicode
+from django.utils.html import conditional_escape, mark_safe
 from django.utils.translation import ugettext_lazy as _
 from mptt.admin import MPTTModelAdmin
 from wms.models import Client, Warehouse, Category, Product, StoreItem, StoreIn, StoreOut, StoreInDetail, StoreOutDetail
+
+
+class CategoryFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the right sidebar just above the filter option
+    title = _('category')
+    
+    # parameter for the filter that will be used in the URL query
+    parameter_name = 'category'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. 
+        The first element in each tuple is the coded vlue for the option that will appear in the URL query.
+        The second element is the human-readable name for the option that will appear in the right sidebar.
+        """
+        categories = Category.objects.all()
+        results = []
+        for category in categories:
+            results.append((category.id, self._get_name(category)))
+
+        return results
+
+    def queryset(self, request, queryset):
+        """
+        Filter list by displaying children if parent node has any
+        """
+        if self.value():
+            t = Category.objects.get(id=self.value())
+            # return queryset.filter(category__lft__gte=t.lft, category__rght__lte=t.rght)
+            # return queryset.filter((Q(category__level=0) & Q(category__tree_id=t.tree_id)) | ~Q(category__level=0), 
+            #     category__lft__gte=t.lft, category__rght__lte=t.rght)
+            return queryset.filter(category__lft__gte=t.lft,
+                category__rght__lte=t.rght,
+                category__tree_id=t.tree_id)
+        else:
+            return queryset
+
+    def _get_name(self, obj):
+        """
+        Get name with level indicator
+        """
+        level_indicator = '--- '
+        return mark_safe(u'%s%s' % (level_indicator*obj.level, conditional_escape(smart_unicode(obj))))
+    
+
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ('name', 'category', 'price', 'unit')
+    # list_filter = ('category', )
+    list_filter = (CategoryFilter, )
+
+    
 
 
 
@@ -48,7 +102,7 @@ class StoreItemAdmin(admin.ModelAdmin):
 admin.site.register(Client)
 admin.site.register(Warehouse)
 admin.site.register(Category, MPTTModelAdmin)
-admin.site.register(Product)
+admin.site.register(Product, ProductAdmin)
 admin.site.register(StoreItem, StoreItemAdmin)  # TODO:只允许查看;不允许修改;
 admin.site.register(StoreIn, StoreInAdmin)
 admin.site.register(StoreOut, StoreOutAdmin)
