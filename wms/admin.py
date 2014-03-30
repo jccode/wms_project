@@ -83,7 +83,7 @@ class StoreInAdmin(admin.ModelAdmin):
     # inlines = [StoreInDetailInline]
     list_display = ('type', 'approver', 'create_time', 'is_approved')
     list_filter = ('is_approved', 'create_time')
-    # actions = ['make_approved']
+    actions = ['my_delete_action']
     
     def get_form(self, request, obj=None, **kwargs):
         if not obj:
@@ -100,9 +100,7 @@ class StoreInAdmin(admin.ModelAdmin):
         
     def get_actions(self, request):
         actions = super(StoreInAdmin, self).get_actions(request)
-        
-        # TODO:: add permission logic
-        # if have approve permission
+        del actions['delete_selected']
         have_approve_permission = request.user.has_perm('wms.approve')
         if have_approve_permission:
             actions['make_approved'] = self.get_action('make_approved')
@@ -150,18 +148,18 @@ class StoreInAdmin(admin.ModelAdmin):
             return False
         return True
 
-    # def my_delete_action(self, request, queryset):
-    #     count = 0
-    #     for obj in queryset:
-    #         if not obj.is_approved:
-    #             obj.delete()
-    #             count += 1
-    #     if count == 1:
-    #         message_bit = '1 %s was' % force_text(self.model._meta.verbose_name)
-    #     else:
-    #         message_bit = '%s %s were' % (count, force_text(self.admin._meta.verbose_name))
-    #     self.message_user(request, "%s successfully deleted." % message_bit)
-    # my_delete_action.short_description = _('Delete selected entities')
+    def my_delete_action(self, request, queryset):
+        count = 0
+        for obj in queryset:
+            if not obj.is_approved:
+                obj.delete()
+                count += 1
+        if count == 1:
+            message_bit = '1 %s was' % force_text(self.model._meta.verbose_name)
+        else:
+            message_bit = '%s %s were' % (count, force_text(self.model._meta.verbose_name))
+        self.message_user(request, "%s successfully deleted." % message_bit)
+    my_delete_action.short_description = _('Delete selected entities')
     
     
         
