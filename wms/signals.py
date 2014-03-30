@@ -7,7 +7,7 @@ from models import StoreIn, StoreInDetail, StoreOut, StoreOutDetail
 from services import *
 
 
-@receiver(post_save, sender=StoreInDetail, dispatch_uid="store_in_post_save_identifier")
+# @receiver(post_save, sender=StoreInDetail, dispatch_uid="store_in_post_save_identifier")
 def store_in_post_save(sender, **kwargs):
     """
     添加入库单(入库操作)时, 更新库存状态/或者添加新的产品到仓库
@@ -19,12 +19,12 @@ def store_in_post_save(sender, **kwargs):
     storeindetail = kwargs['instance']
     product = storeindetail.product
     warehouse = storeindetail.warehouse
-    if(isProductExistInWarehouse(warehouse, product)):
+    if(is_product_exist_in_warehouse(warehouse, product)):
         # update quantity
         storeItem = StoreItem.objects.findByWarehouseAndProduct(warehouse, product)
         storeItem.quantity = storeItem.quantity + storeindetail.quantity
-        storeItem.in_stock_time = timezone.now()
-        storeItem.save(update_fields=['quantity', 'in_stock_time'])
+        # storeItem.in_stock_time = timezone.now()
+        storeItem.save(update_fields=['quantity',])
         
     else:
         # create a new StoreItem

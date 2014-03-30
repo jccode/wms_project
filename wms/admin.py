@@ -4,11 +4,13 @@ from django.contrib import admin
 from django.db import models
 from django.db.models import Q
 from django.forms import TextInput
-from django.utils.encoding import smart_unicode
+from django.utils.encoding import smart_unicode, force_text
 from django.utils.html import conditional_escape, mark_safe
 from django.utils.translation import ugettext_lazy as _
 from mptt.admin import MPTTModelAdmin
 from wms.models import Client, Warehouse, Category, Product, StoreItem, StoreIn, StoreOut, StoreInDetail, StoreOutDetail
+from wms.utils import ReadonlyTabularInline
+from wms.services import update_product_to_warehouse
 
 
 class CategoryFilter(admin.SimpleListFilter):
@@ -69,10 +71,103 @@ class StoreInDetailInline(admin.TabularInline):
     formfield_overrides = {
         models.CharField: {'widget': TextInput(attrs={'size':'15'})}
     }
+
     
 
+class StoreInDetailReadonlyInline(ReadonlyTabularInline):
+    model = StoreInDetail
+    
+
+    
 class StoreInAdmin(admin.ModelAdmin):
-    inlines = [StoreInDetailInline]
+    # inlines = [StoreInDetailInline]
+    list_display = ('type', 'approver', 'create_time', 'is_approved')
+    list_filter = ('is_approved', 'create_time')
+    # actions = ['make_approved']
+    
+    def get_form(self, request, obj=None, **kwargs):
+        if not obj:
+            kwargs['exclude'] = ['recipient', ]
+        return super(StoreInAdmin, self).get_form(request, obj, **kwargs)
+
+    def get_readonly_fields(self, request, obj=None):
+        if self.is_readonly(obj):
+            readonly_fields = [field.name for field in obj.__class__._meta.fields]
+            readonly_fields.remove('id')
+            return readonly_fields
+            
+        return self.readonly_fields
+        
+    def get_actions(self, request):
+        actions = super(StoreInAdmin, self).get_actions(request)
+        
+        # TODO:: add permission logic
+        # if have approve permission
+        have_approve_permission = request.user.has_perm('wms.approve')
+        if have_approve_permission:
+            actions['make_approved'] = self.get_action('make_approved')
+        return actions
+
+        
+    def make_approved(self, request, queryset):
+        queryset = queryset.filter(is_approved=False)
+        rows_updated = queryset.update(is_approved=True, recipient=request.user.id)
+
+        # update to warehouse
+        for obj in queryset:
+            update_product_to_warehouse(obj)
+
+        if rows_updated == 1:
+            message_bit = "1 object was"
+        else:
+            message_bit = "%s objects were" % rows_updated
+        self.message_user(request, "%s successfully approved." % message_bit)
+    make_approved.short_description = _('Mark selected objects as approved')
+
+    
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        obj = StoreIn.objects.get(pk=object_id)
+        if self.is_readonly(obj):
+            extra_context = extra_context or {}
+            extra_context['readonly'] = True
+            extra_context['title'] = _('View %s') % force_text(self.model._meta.verbose_name)
+        return super(StoreInAdmin, self).change_view(request, object_id, form_url, extra_context)
+
+
+    def get_inline_instances(self, request, obj=None):
+        inlines = []
+        if self.is_readonly(obj):
+            inlines = [StoreInDetailReadonlyInline, ]
+        else:
+            inlines = [StoreInDetailInline, ]
+
+        # return inline instances
+        return [inline(self.model, self.admin_site) for inline in inlines]
+
+    def has_delete_permission(self, request, obj=None):
+        print 'has_delete_permission %s' % unicode(obj)
+        if obj and obj.is_approved:
+            return False
+        return True
+
+    # def my_delete_action(self, request, queryset):
+    #     count = 0
+    #     for obj in queryset:
+    #         if not obj.is_approved:
+    #             obj.delete()
+    #             count += 1
+    #     if count == 1:
+    #         message_bit = '1 %s was' % force_text(self.model._meta.verbose_name)
+    #     else:
+    #         message_bit = '%s %s were' % (count, force_text(self.admin._meta.verbose_name))
+    #     self.message_user(request, "%s successfully deleted." % message_bit)
+    # my_delete_action.short_description = _('Delete selected entities')
+    
+    
+        
+    def is_readonly(self, obj=None):
+        return obj and obj.is_approved
+
         
 
 class StoreOutDetailInline(admin.TabularInline):
@@ -92,12 +187,21 @@ class StoreItemAdmin(admin.ModelAdmin):
     readonly_fields = ('in_stock_time', 'warehouse', 'product')
     list_filter = ('warehouse', )
     search_fields = ('product__name', 'in_stock_time')
+    actions = None
 
     def format_in_stock_time(self, obj):
         return obj.in_stock_time.strftime('%Y-%m-%d %H:%M')
     format_in_stock_time.short_description = _('In stock time')
     format_in_stock_time.admin_order_field = 'in_stock_time'
-    
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+        
+
 
 admin.site.register(Client)
 admin.site.register(Warehouse)

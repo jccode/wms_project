@@ -79,7 +79,7 @@ class Product(models.Model):
 
 
 class StoreItemManager(models.Manager):
-    def findByWarehouseAndProduct(self, warehouse, product):
+    def find_by_warehouse_and_product(self, warehouse, product):
         """
         
         Arguments:
@@ -99,7 +99,7 @@ class StoreItem(models.Model):
     area = models.CharField(max_length=45, blank=True, verbose_name=_('Area'))
     shelf = models.CharField(max_length=45, blank=True, verbose_name=_('Shelf'))
     place = models.CharField(max_length=45, blank=True, verbose_name=_('Place'))
-    in_stock_time = models.DateTimeField(_('In stock time'))
+    in_stock_time = models.DateTimeField(_('In stock time'), auto_now=True, editable=False)
     objects = StoreItemManager()
 
     class Meta:
@@ -108,7 +108,7 @@ class StoreItem(models.Model):
         verbose_name_plural = _('Stock Items')
 
     @classmethod
-    def fromStoreInDetail(cls, storeInDetail):
+    def from_store_in_detail(cls, storeInDetail):
         return StoreItem(warehouse = storeInDetail.warehouse,
             product = storeInDetail.product,
             quantity = storeInDetail.quantity,
@@ -133,15 +133,20 @@ class StoreIn(models.Model):
     
     number = models.CharField(max_length=45)
     type = models.IntegerField(choices=TYPE)
-    create_time = models.DateTimeField()
+    create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_('Create Time'))
     complete_time = models.DateTimeField()
     approver = models.ForeignKey(auth.User, related_name="+", verbose_name=_('Approver')) # 接收人
     deliver = models.CharField(max_length=45, verbose_name=_('Deliver')) # 送货人
-    recipient = models.ForeignKey(auth.User, related_name="+", verbose_name=_('Recipient')) # 核准人
+    recipient = models.ForeignKey(auth.User, related_name="+", null=True, verbose_name=_('Recipient')) # 核准人
+    is_approved = models.BooleanField(default=False, editable=False)
+    
     
     class Meta:
         verbose_name = _('Stock In Record')
         verbose_name_plural = _('Stock In Records')
+        permissions = (
+            ('approve', 'Can approve a storein record'), 
+        )
 
     def __unicode__(self):
         return '[%s, %s, %s]' % (self.number, self.TYPE[self.type][1], unicode(self.create_time))
@@ -173,11 +178,12 @@ class StoreOut(models.Model):
     
     number = models.CharField(max_length=45)
     type = models.IntegerField(choices=TYPE)
-    create_time = models.DateTimeField()
+    create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_('Create Time'))
     complete_time = models.DateTimeField()
     approver = models.ForeignKey(auth.User, related_name="+", verbose_name=_('Approver')) # 接收人
     sender = models.CharField(max_length=45, verbose_name=_('Deliver')) # 收货人
-    recipient = models.ForeignKey(auth.User, related_name="+", verbose_name=_('Recipient')) # 核准人
+    recipient = models.ForeignKey(auth.User, related_name="+", null=True, verbose_name=_('Recipient')) # 核准人
+    is_approved = models.BooleanField(default=False, editable=False)
     
     class Meta:
         verbose_name = _('Stock Out Record')
